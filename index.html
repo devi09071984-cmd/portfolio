@@ -51,17 +51,14 @@
   }
 
   /* =================== CANVAS LAYERS =================== */
-  /* Hogwarts parallax background canvas - BEHIND everything */
   #hogwarts-canvas {
     position: fixed; top: 0; left: 0;
     width: 100%; height: 100%; z-index: -2;
   }
-
   #world-canvas {
     position: fixed; top: 0; left: 0;
     width: 100%; height: 100%; z-index: 0;
   }
-
   #bg-canvas {
     position: fixed; top: 0; left: 0;
     width: 100%; height: 100%; z-index: -1;
@@ -106,39 +103,72 @@
   }
   #map-btn:hover { background: rgba(240,192,64,0.25); transform: scale(1.05); }
 
-  #mobile-controls {
+  /* =================== MOBILE BOTTOM BAR =================== */
+  /*
+    Mobile layout (≤900px):
+    ┌─────────────────────────────────┐
+    │  [section label - above bar]    │
+    │  [progress dots - above bar]    │
+    ├─────────────────────────────────┤
+    │  BOTTOM BAR (fixed, no overlap) │
+    │  ┌──────────┐   ┌──UP──┐  SPD  │
+    │  │ LEFT MID RIGHT DOWN │       │
+    │  └─── touch hint ──────┘       │
+    └─────────────────────────────────┘
+  */
+
+  #mobile-bottom-bar {
     position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
+    bottom: 0;
+    left: 0;
+    right: 0;
     z-index: 110;
-    display: none;
+    display: none;                        /* hidden on desktop */
     flex-direction: column;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+    padding: 10px 12px 14px;
+    background: linear-gradient(to top, rgba(5,5,18,0.92) 0%, rgba(5,5,18,0.6) 80%, transparent 100%);
     pointer-events: auto;
     user-select: none;
   }
 
+  /* D-pad row: speed bar on the right */
+  #mobile-dpad-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  #mobile-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
   #mobile-controls .mobile-control-row {
     display: flex;
-    gap: 10px;
+    gap: 8px;
   }
 
   .mobile-control-btn {
-    width: 56px;
-    height: 56px;
+    width: 52px;
+    height: 52px;
     border-radius: 50%;
     border: 1px solid rgba(240,192,64,0.5);
     background: rgba(20,18,40,0.72);
     color: var(--gold);
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     font-weight: 700;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     transition: transform 0.1s, background 0.2s, box-shadow 0.2s;
     touch-action: none;
+    -webkit-tap-highlight-color: transparent;
   }
 
   .mobile-control-btn:active,
@@ -149,24 +179,62 @@
   }
 
   .mobile-control-label {
-    font-size: 0.65rem;
-    letter-spacing: 0.1em;
-    color: rgba(240,192,64,0.8);
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    color: rgba(240,192,64,0.6);
     font-family: 'Cinzel', serif;
     text-align: center;
+    line-height: 1.3;
   }
 
-  @media (max-width: 900px) {
-    #controls-hint { display: none; }
-    #mobile-controls { display: flex; }
-    #hud { padding: 12px 16px; }
+  /* Speed bar inside mobile bottom bar */
+  #mobile-speed-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  #mobile-speed-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.12em;
+    color: rgba(240,192,64,0.5);
+  }
+  #mobile-speed-indicator {
+    width: 6px;
+    height: 50px;
+    background: rgba(240,192,64,0.1);
+    border: 1px solid rgba(240,192,64,0.2);
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+  }
+  #mobile-speed-fill {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: linear-gradient(to top, var(--gold), var(--gold-bright));
+    border-radius: 3px;
+    transition: height 0.1s;
+    box-shadow: 0 0 10px rgba(240,192,64,0.6);
+    height: 20%;
   }
 
-  /* =================== PROGRESS BAR =================== */
+  /* =================== PROGRESS BAR — mobile adjusted =================== */
   #progress-bar {
-    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-    display: flex; gap: 8px; z-index: 100;
+    position: fixed;
+    z-index: 105;
+    display: flex;
+    gap: 6px;
   }
+
+  /* Desktop: bottom-center */
+  #progress-bar {
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
   .prog-dot {
     width: 8px; height: 8px; border-radius: 50%;
     background: rgba(240,192,64,0.25);
@@ -177,13 +245,76 @@
 
   /* =================== SECTION LABEL =================== */
   #section-label {
-    position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%);
-    font-family: 'Cinzel', serif; font-size: 0.8rem; letter-spacing: 0.2em;
-    color: var(--gold); text-shadow: var(--glow-gold);
-    opacity: 0; transition: opacity 0.5s;
-    pointer-events: none; text-align: center;
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Cinzel', serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-shadow: var(--glow-gold);
+    opacity: 0;
+    transition: opacity 0.5s;
+    pointer-events: none;
+    text-align: center;
+    white-space: nowrap;
+    z-index: 105;
   }
   #section-label.visible { opacity: 1; }
+
+  /* Desktop section label position */
+  #section-label { bottom: 50px; }
+
+  /* =================== SPEED BAR (desktop only) =================== */
+  #speed-bar {
+    position: fixed; bottom: 50px; right: 30px; z-index: 100;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+  }
+  #speed-label { font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.15em; color: rgba(240,192,64,0.5); }
+  #speed-indicator {
+    width: 6px; height: 60px;
+    background: rgba(240,192,64,0.1); border: 1px solid rgba(240,192,64,0.2);
+    border-radius: 3px; overflow: hidden; position: relative;
+  }
+  #speed-fill {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(to top, var(--gold), var(--gold-bright));
+    border-radius: 3px; transition: height 0.1s;
+    box-shadow: 0 0 10px rgba(240,192,64,0.6);
+  }
+
+  /* =================== MOBILE OVERRIDES =================== */
+  @media (max-width: 900px) {
+    #controls-hint { display: none; }
+    #mobile-bottom-bar { display: flex; }
+
+    /* Desktop speed bar hidden on mobile (we have one inside the bottom bar) */
+    #speed-bar { display: none; }
+
+    /* Progress dots sit just ABOVE the bottom bar */
+    #progress-bar {
+      bottom: 145px;   /* height of bottom bar ≈ 135px + small gap */
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    /* Section label sits just above progress dots */
+    #section-label {
+      bottom: 168px;
+    }
+
+    #hud { padding: 10px 14px; }
+
+    #hud-name {
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+    }
+
+    #map-btn {
+      padding: 7px 12px;
+      font-size: 0.65rem;
+    }
+  }
 
   /* =================== START OVERLAY =================== */
   #start-overlay {
@@ -225,6 +356,7 @@
     font-family: 'IM Fell English', serif; font-style: italic;
     font-size: 1.1rem; color: rgba(240,192,64,0.7);
     letter-spacing: 0.08em; margin-bottom: 60px; text-align: center;
+    padding: 0 20px;
   }
 
   .platform-label {
@@ -301,6 +433,14 @@
   }
   .section-panel.open { transform: scale(1) translateY(0); }
 
+  @media (max-width: 900px) {
+    .section-panel {
+      padding: 36px 22px;
+      max-height: 80vh;
+      width: 95%;
+    }
+  }
+
   .panel-close {
     position: absolute; top: 20px; right: 24px;
     background: none; border: none; color: var(--gold-dim);
@@ -324,6 +464,7 @@
   .panel-body { line-height: 1.85; color: rgba(232,213,160,0.9); font-size: 0.95rem; }
 
   .skills-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 16px; }
+  @media (max-width: 600px) { .skills-grid { grid-template-columns: 1fr; } }
   .skill-cat { background: rgba(240,192,64,0.05); border: 1px solid rgba(240,192,64,0.15); border-radius: 10px; padding: 20px; }
   .skill-cat h4 { font-family: 'Cinzel', serif; color: var(--gold); font-size: 0.8rem; letter-spacing: 0.15em; margin-bottom: 12px; }
   .skill-tags { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -362,6 +503,7 @@
   .timeline-item .year { font-family: 'Cinzel Decorative', serif; font-size: 1.1rem; color: var(--gold-bright); }
 
   .stat-links { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 16px; }
+  @media (max-width: 600px) { .stat-links { grid-template-columns: 1fr; } }
   .stat-link {
     display: flex; align-items: center; gap: 14px;
     background: rgba(240,192,64,0.05); border: 1px solid rgba(240,192,64,0.2);
@@ -426,24 +568,6 @@
 
   #map-svg { width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
 
-  /* =================== SPEED INDICATOR =================== */
-  #speed-bar {
-    position: fixed; bottom: 50px; right: 30px; z-index: 100;
-    display: flex; flex-direction: column; align-items: center; gap: 6px;
-  }
-  #speed-label { font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.15em; color: rgba(240,192,64,0.5); }
-  #speed-indicator {
-    width: 6px; height: 60px;
-    background: rgba(240,192,64,0.1); border: 1px solid rgba(240,192,64,0.2);
-    border-radius: 3px; overflow: hidden; position: relative;
-  }
-  #speed-fill {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    background: linear-gradient(to top, var(--gold), var(--gold-bright));
-    border-radius: 3px; transition: height 0.1s;
-    box-shadow: 0 0 10px rgba(240,192,64,0.6);
-  }
-
   /* =================== TOAST =================== */
   #toast {
     position: fixed; top: 80px; left: 50%; transform: translateX(-50%);
@@ -453,6 +577,8 @@
     z-index: 200; opacity: 0; pointer-events: none;
     transition: opacity 0.4s; box-shadow: var(--glow-gold);
     white-space: nowrap;
+    max-width: 90vw;
+    text-align: center;
   }
   #toast.show { opacity: 1; }
 
@@ -465,7 +591,6 @@
     position: fixed; inset: 0; z-index: 1; pointer-events: none;
     background: radial-gradient(ellipse 80% 60% at 50% 100%, rgba(100,80,40,0.12) 0%, transparent 70%);
   }
-
   #vignette {
     position: fixed; inset: 0; z-index: 2; pointer-events: none;
     background: radial-gradient(ellipse 80% 80% at 50% 50%, transparent 40%, rgba(0,0,0,0.7) 100%);
@@ -480,13 +605,8 @@
 <div id="cursor"></div>
 <div id="cursor-trail"></div>
 
-<!-- Hogwarts parallax background - rendered first (lowest z-index) -->
 <canvas id="hogwarts-canvas"></canvas>
-
-<!-- Particle/effect canvas -->
 <canvas id="bg-canvas"></canvas>
-
-<!-- Main game canvas -->
 <canvas id="world-canvas"></canvas>
 
 <!-- HUD -->
@@ -501,22 +621,42 @@
   <button id="map-btn">🗺 MARAUDER'S MAP</button>
 </div>
 
-<div id="mobile-controls">
-  <button id="mobile-up" class="mobile-control-btn" aria-label="Up">⬆</button>
-  <div class="mobile-control-row">
-    <button id="mobile-left" class="mobile-control-btn" aria-label="Left">⬅</button>
-    <button id="mobile-down" class="mobile-control-btn" aria-label="Down">⬇</button>
-    <button id="mobile-right" class="mobile-control-btn" aria-label="Right">➡</button>
-  </div>
-  <div class="mobile-control-label">Touch to fly: forward/backward/up/down</div>
-</div>
-
+<!-- Section label (floats above bottom bar on mobile) -->
 <div id="section-label"></div>
+
+<!-- Progress dots (floats above bottom bar on mobile) -->
 <div id="progress-bar"></div>
 
+<!-- Desktop speed bar -->
 <div id="speed-bar">
   <div id="speed-indicator"><div id="speed-fill" style="height:20%"></div></div>
   <div id="speed-label">SPEED</div>
+</div>
+
+<!-- =================== MOBILE BOTTOM BAR =================== -->
+<div id="mobile-bottom-bar">
+  <div id="mobile-dpad-row">
+
+    <!-- D-pad -->
+    <div id="mobile-controls">
+      <button id="mobile-up" class="mobile-control-btn" aria-label="Up">⬆</button>
+      <div class="mobile-control-row">
+        <button id="mobile-left" class="mobile-control-btn" aria-label="Left">⬅</button>
+        <button id="mobile-down" class="mobile-control-btn" aria-label="Down">⬇</button>
+        <button id="mobile-right" class="mobile-control-btn" aria-label="Right">➡</button>
+      </div>
+    </div>
+
+    <!-- Speed bar -->
+    <div id="mobile-speed-bar">
+      <div id="mobile-speed-indicator">
+        <div id="mobile-speed-fill"></div>
+      </div>
+      <div id="mobile-speed-label">SPD</div>
+    </div>
+
+  </div>
+  <div class="mobile-control-label">Touch to fly · ⬆⬇ altitude · ⬅➡ forward/back</div>
 </div>
 
 <div id="toast"></div>
@@ -584,10 +724,10 @@ const SECTIONS = [
 const PANEL_CONTENTS = {
   about:`<div style="display:flex;flex-direction:column;gap:20px"><div style="text-align:center;padding:20px 0"><div style="width:90px;height:90px;border-radius:50%;background:radial-gradient(circle, #f0c04033, #f0c04011);border:2px solid #f0c04055;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;">🧙‍♀️</div><div style="font-family:'Cinzel Decorative',serif;font-size:1.4rem;color:#ffe066;margin-bottom:4px">Sanjana Gadamsetty</div><div style="font-family:'Cinzel',serif;font-size:0.75rem;letter-spacing:0.2em;color:#a8862a">LEARNER · CODER · CREATOR</div></div><p>Welcome to my enchanted corner of the coding universe. I'm a passionate learner on an exciting journey through the magical world of technology — building intelligent systems and solving complex problems, one spell (line of code) at a time.</p><p>Like any young wizard beginning at Hogwarts, I'm mastering the fundamentals and exploring deeper magic — from algorithms and data structures to AI and machine learning. Every bug is a dragon to be slain, every project a new adventure to embark upon.</p><div style="padding:16px 20px;background:rgba(240,192,64,0.06);border-left:3px solid #a8862a;border-radius:0 8px 8px 0;font-style:italic">"Building intelligent systems and solving complex problems — one line of code at a time."</div></div>`,
   skills:`<div class="skills-grid"><div class="skill-cat"><h4>⚡ SPELLS (LANGUAGES)</h4><div class="skill-tags"><span class="skill-tag">C</span><span class="skill-tag">C++</span><span class="skill-tag">Python</span><span class="skill-tag">SQL</span><span class="skill-tag">Java</span></div></div><div class="skill-cat"><h4>🔮 ANCIENT MAGIC (AI & DS)</h4><div class="skill-tags"><span class="skill-tag">NumPy</span><span class="skill-tag">Pandas</span><span class="skill-tag">Data Structures</span><span class="skill-tag">Algorithms</span></div></div><div class="skill-cat"><h4>🛠️ MAGICAL TOOLS</h4><div class="skill-tags"><span class="skill-tag">Git</span><span class="skill-tag">GitHub</span><span class="skill-tag">VS Code</span><span class="skill-tag">Cursor</span><span class="skill-tag">Jupyter</span></div></div><div class="skill-cat"><h4>🪄 ENCHANTED ARTIFACTS</h4><div class="skill-tags"><span class="skill-tag">PowerPoint</span><span class="skill-tag">Canva</span><span class="skill-tag">Excel</span><span class="skill-tag">Power BI</span></div></div></div>`,
-  projects:`<a href="https://github.com/SanjanaGadamsetty/TIC-TAC-TOE.tkinter" target="_blank" class="project-card"><h3>Tic-Tac-Toe</h3><div class="potion-name">✨ "The Strategy Potion" — Logic & Game Design</div><p>A fully interactive Tic-Tac-Toe game brewed with pure logic and strategic thinking. This potion tests the mind and sharpens decision-making.</p><div style="margin-top:12px;display:flex;gap:8px"><span class="skill-tag">Python</span><span class="skill-tag">Tkinter</span><span class="skill-tag">Game Design</span></div></a><a href="https://github.com/SanjanaGadamsetty/Random-Password-Generator" target="_blank" class="project-card"><h3>Password Generator</h3><div class="potion-name">🔐 "The Security Elixir" — Cryptographic Alchemy</div><p>A powerful security elixir that conjures strong, randomized passwords. Weaves together character sets, randomization algorithms, and user-defined parameters.</p><div style="margin-top:12px;display:flex;gap:8px"><span class="skill-tag">Python</span><span class="skill-tag">Security</span><span class="skill-tag">Randomization</span></div></a><a href="https://github.com/SanjanaGadamsetty/ConversionBODH" target="_blank" class="project-card"><h3>Conversion BODH</h3><div class="potion-name">🔄 "The Transmutation Brew" — Data Transformation</div><p>A mystical conversion tool that transforms data between different formats and systems. Master the art of data alchemy with this powerful brew.</p><div style="margin-top:12px;display:flex;gap:8px"><span class="skill-tag">Python</span><span class="skill-tag">Data Processing</span><span class="skill-tag">Conversion</span></div></a><a href="https://github.com/SanjanaGadamsetty/Create_New_Folder" target="_blank" class="project-card"><h3>Folder Creator</h3><div class="potion-name">📁 "The Organization Draught" — File System Magic</div><p>An enchanted utility that conjures new folders and organizes your digital realm. Perfect for maintaining order in the chaos of code.</p><div style="margin-top:12px;display:flex;gap:8px"><span class="skill-tag">Python</span><span class="skill-tag">File System</span><span class="skill-tag">Automation</span></div></a><a href="https://github.com/SanjanaGadamsetty/UnitConversion" target="_blank" class="project-card"><h3>Unit Converter</h3><div class="potion-name">⚖️ "The Measurement Elixir" — Dimensional Transmutation</div><p>A precise alchemical tool for converting between different units of measurement. From length to weight, temperature to volume — master all dimensions.</p><div style="margin-top:12px;display:flex;gap:8px"><span class="skill-tag">Python</span><span class="skill-tag">Mathematics</span><span class="skill-tag">Utilities</span></div></a>`,
+  projects:`<a href="https://github.com/SanjanaGadamsetty/TIC-TAC-TOE.tkinter" target="_blank" class="project-card"><h3>Tic-Tac-Toe</h3><div class="potion-name">✨ "The Strategy Potion" — Logic & Game Design</div><p>A fully interactive Tic-Tac-Toe game brewed with pure logic and strategic thinking. This potion tests the mind and sharpens decision-making.</p><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><span class="skill-tag">Python</span><span class="skill-tag">Tkinter</span><span class="skill-tag">Game Design</span></div></a><a href="https://github.com/SanjanaGadamsetty/Random-Password-Generator" target="_blank" class="project-card"><h3>Password Generator</h3><div class="potion-name">🔐 "The Security Elixir" — Cryptographic Alchemy</div><p>A powerful security elixir that conjures strong, randomized passwords.</p><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><span class="skill-tag">Python</span><span class="skill-tag">Security</span><span class="skill-tag">Randomization</span></div></a><a href="https://github.com/SanjanaGadamsetty/ConversionBODH" target="_blank" class="project-card"><h3>Conversion BODH</h3><div class="potion-name">🔄 "The Transmutation Brew" — Data Transformation</div><p>A mystical conversion tool that transforms data between different formats and systems.</p><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><span class="skill-tag">Python</span><span class="skill-tag">Data Processing</span><span class="skill-tag">Conversion</span></div></a><a href="https://github.com/SanjanaGadamsetty/Create_New_Folder" target="_blank" class="project-card"><h3>Folder Creator</h3><div class="potion-name">📁 "The Organization Draught" — File System Magic</div><p>An enchanted utility that conjures new folders and organizes your digital realm.</p><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><span class="skill-tag">Python</span><span class="skill-tag">File System</span><span class="skill-tag">Automation</span></div></a><a href="https://github.com/SanjanaGadamsetty/UnitConversion" target="_blank" class="project-card"><h3>Unit Converter</h3><div class="potion-name">⚖️ "The Measurement Elixir" — Dimensional Transmutation</div><p>A precise alchemical tool for converting between different units of measurement.</p><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><span class="skill-tag">Python</span><span class="skill-tag">Mathematics</span><span class="skill-tag">Utilities</span></div></a>`,
   achievements:`<div style="text-align:center;padding:30px 0"><div style="font-size:4rem;margin-bottom:16px;filter:drop-shadow(0 0 20px gold)">🏆</div><div style="font-family:'Cinzel',serif;font-size:0.7rem;letter-spacing:0.25em;color:#a8862a;margin-bottom:20px">DISTINGUISHED HONOURS</div></div><div style="background:linear-gradient(135deg,rgba(240,192,64,0.08),rgba(240,192,64,0.03));border:1px solid rgba(240,192,64,0.25);border-radius:12px;padding:28px 32px;text-align:center"><div style="font-family:'Cinzel Decorative',serif;font-size:1rem;color:#ffe066;margin-bottom:10px">🥇 Best Paper Award</div><div style="font-family:'IM Fell English',serif;font-style:italic;font-size:1.1rem;color:#e8d5a0;margin-bottom:12px">Quantum Material (Graphene)</div><div style="font-size:0.85rem;color:rgba(232,213,160,0.7);line-height:1.7">SMTBEA-2025 · SSN Chennai<br><span style="font-size:0.75rem;color:#a8862a">International Conference on Science, Mathematics, Technology & Beyond</span></div></div>`,
   certs:`<div class="cert-item"><div class="cert-icon">📜</div><div><h4>Python for Beginners</h4><p>Comprehensive Python fundamentals certification</p></div></div><div class="cert-item"><div class="cert-icon">📜</div><div><h4>Data Structures & Algorithms</h4><p>Core DSA concepts and problem solving</p></div></div><div class="cert-item"><div class="cert-icon">📜</div><div><h4>SQL Fundamentals</h4><p>Database querying and management</p></div></div><div class="cert-item"><div class="cert-icon">📜</div><div><h4>Introduction to AI & Machine Learning</h4><p>Foundational AI and ML concepts</p></div></div><div class="cert-item"><div class="cert-icon">📜</div><div><h4>Git & GitHub Essentials</h4><p>Version control and collaborative development</p></div></div><div class="cert-item"><div class="cert-icon">📜</div><div><h4>Power BI Fundamentals</h4><p>Data visualization and business intelligence</p></div></div>`,
-  stats:`<p style="margin-bottom:20px;font-style:italic;color:rgba(232,213,160,0.7)">The footprints trace across the magical map — each platform a realm of problem-solving conquered...</p><div class="stat-links" style="grid-template-columns:repeat(2,1fr);gap:12px"><a class="stat-link" href="https://github.com/SanjanaGadamsetty" target="_blank"><span class="link-icon">🐙</span><div><div style="font-size:0.65rem;color:#a8862a;margin-bottom:2px">CODE REPOSITORY</div><b>GitHub</b><div style="font-size:0.7rem;color:rgba(232,213,160,0.55);margin-top:1px">@SanjanaGadamsetty</div></div></a><a class="stat-link" href="https://www.linkedin.com/in/sanjana-gadamsetty/" target="_blank"><span class="link-icon">💼</span><div><div style="font-size:0.65rem;color:#a8862a;margin-bottom:2px">PROFESSIONAL NETWORK</div><b>LinkedIn</b><div style="font-size:0.7rem;color:rgba(232,213,160,0.55);margin-top:1px">@sanjana-gadamsetty</div></div></a><a class="stat-link" href="https://leetcode.com/u/SanjanaGadamsetty/" target="_blank"><span class="link-icon">⚡</span><div><div style="font-size:0.65rem;color:#a8862a;margin-bottom:2px">ALGORITHM DUELS</div><b>LeetCode</b><div style="font-size:0.7rem;color:rgba(232,213,160,0.55);margin-top:1px">@SanjanaGadamsetty</div></div></a><a class="stat-link" href="https://www.codechef.com/users/bit_flux_radha" target="_blank"><span class="link-icon">👨‍🍳</span><div><div style="font-size:0.65rem;color:#a8862a;margin-bottom:2px">COMPETITIVE KITCHEN</div><b>CodeChef</b><div style="font-size:0.7rem;color:rgba(232,213,160,0.55);margin-top:1px">@bit_flux_radha</div></div></a><a class="stat-link" href="https://codeforces.com/profile/gvnsanjana" target="_blank"><span class="link-icon">⚔️</span><div><div style="font-size:0.65rem;color:#a8862a;margin-bottom:2px">BATTLE ARENA</div><b>Codeforces</b></div></a><a class="stat-link" href="https://atcoder.jp/users/sanjanagvn" target="_blank"><span class="link-icon">🎯</span><div><div style="font-size:0.65rem;color:#a8862a;margin-bottom:2px">PRECISION CONTESTS</div><b>AtCoder</b></div></a><a class="stat-link" href="https://codolio.com/profile/gvnsanjana" target="_blank"><span class="link-icon">🌟</span><div><div style="font-size:0.65rem;color:#a8862a;margin-bottom:2px">PORTFOLIO TRACKER</div><b>Codolio</b></div></a><a class="stat-link" href="https://takeuforward.org/profile/bit_flux_radha" target="_blank"><span class="link-icon">🔥</span><div><div style="font-size:0.65rem;color:#a8862a;margin-bottom:2px">DSA MASTERY</div><b>TakeUForward</b></div></a><a class="stat-link" href="https://www.geeksforgeeks.org/profile/gvnsanjana09" target="_blank"><span class="link-icon">🌿</span><div><div style="font-size:0.65rem;color:#a8862a;margin-bottom:2px">CS ENCYCLOPEDIA</div><b>GeeksForGeeks</b></div></a><a class="stat-link" href="https://www.hackerrank.com/profile/gvnsanjana_ds" target="_blank"><span class="link-icon">🏅</span><div><div style="font-size:0.65rem;color:#a8862a;margin-bottom:2px">CHALLENGE GROUNDS</div><b>HackerRank</b></div></a></div>`,
+  stats:`<p style="margin-bottom:20px;font-style:italic;color:rgba(232,213,160,0.7)">The footprints trace across the magical map — each platform a realm of problem-solving conquered...</p><div class="stat-links"><a class="stat-link" href="https://github.com/SanjanaGadamsetty" target="_blank"><span class="link-icon">🐙</span><div><div style="font-size:0.65rem;color:#a8862a;margin-bottom:2px">CODE REPOSITORY</div><b>GitHub</b></div></a><a class="stat-link" href="https://www.linkedin.com/in/sanjana-gadamsetty/" target="_blank"><span class="link-icon">💼</span><div><div style="font-size:0.65rem;color:#a8862a;margin-bottom:2px">PROFESSIONAL NETWORK</div><b>LinkedIn</b></div></a><a class="stat-link" href="https://leetcode.com/u/SanjanaGadamsetty/" target="_blank"><span class="link-icon">⚡</span><div><div style="font-size:0.65rem;color:#a8862a;margin-bottom:2px">ALGORITHM DUELS</div><b>LeetCode</b></div></a><a class="stat-link" href="https://www.codechef.com/users/bit_flux_radha" target="_blank"><span class="link-icon">👨‍🍳</span><div><div style="font-size:0.65rem;color:#a8862a;margin-bottom:2px">COMPETITIVE KITCHEN</div><b>CodeChef</b></div></a><a class="stat-link" href="https://codeforces.com/profile/gvnsanjana" target="_blank"><span class="link-icon">⚔️</span><div><div style="font-size:0.65rem;color:#a8862a;margin-bottom:2px">BATTLE ARENA</div><b>Codeforces</b></div></a><a class="stat-link" href="https://atcoder.jp/users/sanjanagvn" target="_blank"><span class="link-icon">🎯</span><div><div style="font-size:0.65rem;color:#a8862a;margin-bottom:2px">PRECISION CONTESTS</div><b>AtCoder</b></div></a><a class="stat-link" href="https://codolio.com/profile/gvnsanjana" target="_blank"><span class="link-icon">🌟</span><div><div style="font-size:0.65rem;color:#a8862a;margin-bottom:2px">PORTFOLIO TRACKER</div><b>Codolio</b></div></a><a class="stat-link" href="https://takeuforward.org/profile/bit_flux_radha" target="_blank"><span class="link-icon">🔥</span><div><div style="font-size:0.65rem;color:#a8862a;margin-bottom:2px">DSA MASTERY</div><b>TakeUForward</b></div></a><a class="stat-link" href="https://www.geeksforgeeks.org/profile/gvnsanjana09" target="_blank"><span class="link-icon">🌿</span><div><div style="font-size:0.65rem;color:#a8862a;margin-bottom:2px">CS ENCYCLOPEDIA</div><b>GeeksForGeeks</b></div></a><a class="stat-link" href="https://www.hackerrank.com/profile/gvnsanjana_ds" target="_blank"><span class="link-icon">🏅</span><div><div style="font-size:0.65rem;color:#a8862a;margin-bottom:2px">CHALLENGE GROUNDS</div><b>HackerRank</b></div></a></div>`,
   journey:`<div class="timeline"><div class="timeline-item"><div class="year">2023</div><h4>Hello, Magical World</h4><p style="font-size:0.85rem;color:rgba(232,213,160,0.7);margin-top:4px">The journey begins. First steps into the world of programming — the incantation "Hello World" echoes through the halls of code.</p></div><div class="timeline-item"><div class="year">2024</div><h4>First Potions Brewed</h4><p style="font-size:0.85rem;color:rgba(232,213,160,0.7);margin-top:4px">Created first real projects — Tic-Tac-Toe and Password Generator. The cauldron bubbles with newfound skills.</p></div><div class="timeline-item"><div class="year">2025</div><h4>C Programming Mastery + Paper Award</h4><p style="font-size:0.85rem;color:rgba(232,213,160,0.7);margin-top:4px">Deep dive into C programming. Won Best Paper Award at SMTBEA-2025 for research on Graphene.</p></div><div class="timeline-item"><div class="year">2026</div><h4>C++, Java & DSA — The Dark Arts of Algorithms</h4><p style="font-size:0.85rem;color:rgba(232,213,160,0.7);margin-top:4px">Expanding the spellbook with C++, Java, and Data Structures & Algorithms.</p></div></div>`,
   resume:`<div style="text-align:center;padding:20px 0 30px"><div style="font-size:3.5rem;margin-bottom:16px">📄</div><p style="font-family:'IM Fell English',serif;font-style:italic;margin-bottom:30px;line-height:1.8">Sealed and stamped by the Ministry of Magic,<br>this official document reveals the full record<br>of magical achievements and coding conquests.</p><div style="display:flex;flex-direction:column;gap:14px;align-items:center"><a href="https://docs.google.com/document/d/1o0cBBbhRsSDlMykYV_GFgVOPzr0w3nEA9J9lbBtOImw/edit?tab=t.0" target="_blank" class="contact-btn primary" style="min-width:240px;justify-content:center">📜 View Official Resume</a><a href="https://docs.google.com/document/d/1o0cBBbhRsSDlMykYV_GFgVOPzr0w3nEA9J9lbBtOImw/export?format=pdf" target="_blank" class="contact-btn" style="min-width:240px;justify-content:center">⬇️ Download as PDF</a></div></div>`
 };
@@ -605,17 +745,8 @@ function resizeHCanvas() {
 resizeHCanvas();
 window.addEventListener('resize', resizeHCanvas);
 
-// Parallax layers: each has a speed multiplier (0=static, 1=moves with world)
-// We'll draw Hogwarts castle using pure canvas art across multiple parallax layers
+const PARALLAX = [0.02, 0.07, 0.18, 0.45];
 
-// ---- LAYER 0: Moon & sky gradient (barely moves) ----
-// ---- LAYER 1: Distant mountains (slow) ----
-// ---- LAYER 2: Hogwarts castle silhouette (medium) ----
-// ---- LAYER 3: Foreground hills/trees (fast) ----
-
-const PARALLAX = [0.02, 0.07, 0.18, 0.45]; // each layer's scroll speed factor
-
-// Precompute some random trees/rocks for foreground
 const fgTrees = [];
 for(let i=0;i<120;i++) {
   fgTrees.push({
@@ -626,7 +757,6 @@ for(let i=0;i<120;i++) {
     side: Math.random() < 0.5 ? 'bottom' : 'top'
   });
 }
-// Mid layer rocks & ruins
 const midRocks = [];
 for(let i=0;i<40;i++) {
   midRocks.push({
@@ -636,17 +766,13 @@ for(let i=0;i<40;i++) {
   });
 }
 
-// Draw a single spire/tower
 function drawTower(ctx, x, baseY, w, h, hasTurret=true, windowGlow='#f0c040') {
-  // Main body
   ctx.fillRect(x - w/2, baseY - h, w, h);
-  // Battlements
   if(hasTurret) {
     const mw = w/5, count = Math.floor(w/mw);
     for(let i=0;i<count;i++) {
       if(i%2===0) ctx.fillRect(x - w/2 + i*mw, baseY - h - mw*1.5, mw, mw*1.5);
     }
-    // Conical roof
     ctx.beginPath();
     ctx.moveTo(x - w/2 - 5, baseY - h);
     ctx.lineTo(x, baseY - h - w*1.1);
@@ -654,9 +780,7 @@ function drawTower(ctx, x, baseY, w, h, hasTurret=true, windowGlow='#f0c040') {
     ctx.closePath();
     ctx.fill();
   }
-  // Windows with glow
-  const winH = h * 0.08;
-  const winW = w * 0.2;
+  const winH = h * 0.08, winW = w * 0.2;
   const rows = Math.floor(h / 35);
   for(let row=0; row<rows; row++) {
     const wy = baseY - h + 20 + row*35;
@@ -665,7 +789,6 @@ function drawTower(ctx, x, baseY, w, h, hasTurret=true, windowGlow='#f0c040') {
       ctx.save();
       ctx.shadowBlur = 8; ctx.shadowColor = windowGlow;
       ctx.fillStyle = windowGlow + 'bb';
-      // Arched window
       ctx.beginPath();
       ctx.rect(wx2, wy, winW, winH);
       ctx.arc(wx2 + winW/2, wy, winW/2, Math.PI, 0);
@@ -675,488 +798,208 @@ function drawTower(ctx, x, baseY, w, h, hasTurret=true, windowGlow='#f0c040') {
   }
 }
 
-// ======================================================
-// REALISTIC OWL WITH WING FLAPPING
-// ======================================================
 function drawFlyingOwl(ctx, x, y, t, owlIndex) {
   ctx.save();
   ctx.translate(x, y);
-
-  // Wing flapping cycle (2 beats per second)
   const flapCycle = Math.sin(t * 0.02 + owlIndex * Math.PI) * 0.5 + 0.5;
-  const wingAngle = flapCycle * Math.PI * 0.8 - Math.PI * 0.4; // -40° to +40°
-
-  // Slight body bob with flight
+  const wingAngle = flapCycle * Math.PI * 0.8 - Math.PI * 0.4;
   const bodyBob = Math.sin(t * 0.015 + owlIndex * 1.5) * 2;
-
-  // Owl body (rounded rectangle)
-  ctx.fillStyle = '#8B4513'; // Brown body
-  ctx.beginPath();
-  ctx.roundRect(-8, -5 + bodyBob, 16, 12, 6);
-  ctx.fill();
-
-  // Owl head (circle)
-  ctx.fillStyle = '#D2B48C'; // Tan head
-  ctx.beginPath();
-  ctx.arc(0, -8 + bodyBob, 6, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Eyes (yellow with black pupils)
-  ctx.fillStyle = '#FFD700'; // Gold eyes
-  ctx.beginPath();
-  ctx.arc(-2, -9 + bodyBob, 2, 0, Math.PI * 2);
-  ctx.arc(2, -9 + bodyBob, 2, 0, Math.PI * 2);
-  ctx.fill();
-
-  ctx.fillStyle = '#000000'; // Black pupils
-  ctx.beginPath();
-  ctx.arc(-2, -9 + bodyBob, 1, 0, Math.PI * 2);
-  ctx.arc(2, -9 + bodyBob, 1, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Beak
-  ctx.fillStyle = '#FFA500'; // Orange beak
-  ctx.beginPath();
-  ctx.moveTo(0, -6 + bodyBob);
-  ctx.lineTo(-1, -4 + bodyBob);
-  ctx.lineTo(1, -4 + bodyBob);
-  ctx.closePath();
-  ctx.fill();
-
-  // Left wing (animated)
-  ctx.save();
-  ctx.translate(-6, -2 + bodyBob);
-  ctx.rotate(wingAngle);
-  ctx.fillStyle = '#654321'; // Dark brown wing
-  ctx.beginPath();
-  ctx.ellipse(0, 0, 12, 4, 0, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Wing feathers
-  ctx.strokeStyle = '#8B4513';
-  ctx.lineWidth = 1;
-  for(let i = 0; i < 3; i++) {
-    ctx.beginPath();
-    ctx.moveTo(-8 + i * 3, -2);
-    ctx.lineTo(-8 + i * 3, 2);
-    ctx.stroke();
-  }
+  ctx.fillStyle = '#8B4513';
+  ctx.beginPath(); ctx.roundRect(-8, -5 + bodyBob, 16, 12, 6); ctx.fill();
+  ctx.fillStyle = '#D2B48C';
+  ctx.beginPath(); ctx.arc(0, -8 + bodyBob, 6, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#FFD700';
+  ctx.beginPath(); ctx.arc(-2, -9 + bodyBob, 2, 0, Math.PI * 2); ctx.arc(2, -9 + bodyBob, 2, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#000000';
+  ctx.beginPath(); ctx.arc(-2, -9 + bodyBob, 1, 0, Math.PI * 2); ctx.arc(2, -9 + bodyBob, 1, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#FFA500';
+  ctx.beginPath(); ctx.moveTo(0, -6 + bodyBob); ctx.lineTo(-1, -4 + bodyBob); ctx.lineTo(1, -4 + bodyBob); ctx.closePath(); ctx.fill();
+  ctx.save(); ctx.translate(-6, -2 + bodyBob); ctx.rotate(wingAngle);
+  ctx.fillStyle = '#654321'; ctx.beginPath(); ctx.ellipse(0, 0, 12, 4, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#8B4513'; ctx.lineWidth = 1;
+  for(let i = 0; i < 3; i++) { ctx.beginPath(); ctx.moveTo(-8 + i * 3, -2); ctx.lineTo(-8 + i * 3, 2); ctx.stroke(); }
   ctx.restore();
-
-  // Right wing (animated, opposite phase)
-  ctx.save();
-  ctx.translate(6, -2 + bodyBob);
-  ctx.rotate(-wingAngle); // Opposite wing flaps opposite
-  ctx.fillStyle = '#654321'; // Dark brown wing
-  ctx.beginPath();
-  ctx.ellipse(0, 0, 12, 4, 0, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Wing feathers
-  ctx.strokeStyle = '#8B4513';
-  ctx.lineWidth = 1;
-  for(let i = 0; i < 3; i++) {
-    ctx.beginPath();
-    ctx.moveTo(8 - i * 3, -2);
-    ctx.lineTo(8 - i * 3, 2);
-    ctx.stroke();
-  }
+  ctx.save(); ctx.translate(6, -2 + bodyBob); ctx.rotate(-wingAngle);
+  ctx.fillStyle = '#654321'; ctx.beginPath(); ctx.ellipse(0, 0, 12, 4, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#8B4513'; ctx.lineWidth = 1;
+  for(let i = 0; i < 3; i++) { ctx.beginPath(); ctx.moveTo(8 - i * 3, -2); ctx.lineTo(8 - i * 3, 2); ctx.stroke(); }
   ctx.restore();
-
-  // Tail feathers
-  ctx.fillStyle = '#654321';
-  ctx.beginPath();
-  ctx.ellipse(0, 8 + bodyBob, 4, 8, 0, 0, Math.PI * 2);
-  ctx.fill();
-
+  ctx.fillStyle = '#654321'; ctx.beginPath(); ctx.ellipse(0, 8 + bodyBob, 4, 8, 0, 0, Math.PI * 2); ctx.fill();
   ctx.restore();
 }
 
-// Draw the full Hogwarts scene onto hCtx given current worldX
 function drawHogwarts(t) {
   const W = hCanvas.width, H = hCanvas.height;
   hCtx.clearRect(0, 0, W, H);
-
-  // ----------- LAYER 0: Sky gradient + moon -----------
   const skyGrad = hCtx.createLinearGradient(0, 0, 0, H * 0.75);
-  skyGrad.addColorStop(0, '#020412');
-  skyGrad.addColorStop(0.3, '#08102a');
-  skyGrad.addColorStop(0.6, '#10183c');
-  skyGrad.addColorStop(1, '#1a1220');
-  hCtx.fillStyle = skyGrad;
-  hCtx.fillRect(0, 0, W, H);
-
-  // Stars (fixed, no parallax) - reduced by 40%
+  skyGrad.addColorStop(0, '#020412'); skyGrad.addColorStop(0.3, '#08102a');
+  skyGrad.addColorStop(0.6, '#10183c'); skyGrad.addColorStop(1, '#1a1220');
+  hCtx.fillStyle = skyGrad; hCtx.fillRect(0, 0, W, H);
   hCtx.save();
-  for(let i=0; i<120; i++) {
-    const sx = ((i * 173.7) % W);
-    const sy = ((i * 97.3) % (H * 0.72));
+  for(let i=0;i<120;i++) {
+    const sx = ((i * 173.7) % W), sy = ((i * 97.3) % (H * 0.72));
     const bright = 0.4 + 0.6 * Math.abs(Math.sin(i + t * 0.00015));
     hCtx.globalAlpha = bright * 0.8;
     hCtx.fillStyle = i % 5 === 0 ? '#ffd0a0' : '#c0d0ff';
-    hCtx.beginPath();
-    hCtx.arc(sx, sy, i % 7 === 0 ? 1.5 : 0.7, 0, Math.PI*2);
-    hCtx.fill();
+    hCtx.beginPath(); hCtx.arc(sx, sy, i % 7 === 0 ? 1.5 : 0.7, 0, Math.PI*2); hCtx.fill();
   }
   hCtx.restore();
-
-  // Moon (very slow parallax)
   const moonOffX = worldX * PARALLAX[0];
-  const moonX = W * 0.75 - (moonOffX % (W * 2)) + W * 0.1;
-  const moonY = H * 0.18;
+  const moonX = W * 0.75 - (moonOffX % (W * 2)) + W * 0.1, moonY = H * 0.18;
   hCtx.save();
-  // Moon glow
   const moonGlow = hCtx.createRadialGradient(moonX, moonY, 0, moonX, moonY, 120);
-  moonGlow.addColorStop(0, 'rgba(200,220,255,0.12)');
-  moonGlow.addColorStop(0.4, 'rgba(180,200,255,0.06)');
-  moonGlow.addColorStop(1, 'transparent');
-  hCtx.fillStyle = moonGlow;
-  hCtx.beginPath(); hCtx.arc(moonX, moonY, 120, 0, Math.PI*2); hCtx.fill();
-  // Moon disc
+  moonGlow.addColorStop(0, 'rgba(200,220,255,0.12)'); moonGlow.addColorStop(0.4, 'rgba(180,200,255,0.06)'); moonGlow.addColorStop(1, 'transparent');
+  hCtx.fillStyle = moonGlow; hCtx.beginPath(); hCtx.arc(moonX, moonY, 120, 0, Math.PI*2); hCtx.fill();
   hCtx.shadowBlur = 30; hCtx.shadowColor = '#c8d8ff';
   const moonGrad = hCtx.createRadialGradient(moonX-8, moonY-8, 2, moonX, moonY, 45);
-  moonGrad.addColorStop(0, '#f0f0ff');
-  moonGrad.addColorStop(0.6, '#c8d0ff');
-  moonGrad.addColorStop(1, '#a0b0e0');
-  hCtx.fillStyle = moonGrad;
-  hCtx.beginPath(); hCtx.arc(moonX, moonY, 45, 0, Math.PI*2); hCtx.fill();
-  // Moon craters
+  moonGrad.addColorStop(0, '#f0f0ff'); moonGrad.addColorStop(0.6, '#c8d0ff'); moonGrad.addColorStop(1, '#a0b0e0');
+  hCtx.fillStyle = moonGrad; hCtx.beginPath(); hCtx.arc(moonX, moonY, 45, 0, Math.PI*2); hCtx.fill();
   hCtx.globalAlpha = 0.15; hCtx.fillStyle = '#8090c0';
-  [[12,-8,6],[-15,5,4],[5,18,3],[-5,-20,5]].forEach(([cx,cy,r])=>{
-    hCtx.beginPath(); hCtx.arc(moonX+cx, moonY+cy, r, 0, Math.PI*2); hCtx.fill();
-  });
+  [[12,-8,6],[-15,5,4],[5,18,3],[-5,-20,5]].forEach(([cx,cy,r])=>{ hCtx.beginPath(); hCtx.arc(moonX+cx, moonY+cy, r, 0, Math.PI*2); hCtx.fill(); });
   hCtx.restore();
-
-  // ----------- LAYER 1: Distant mountains (very slow) -----------
   const mOff = worldX * PARALLAX[1];
-  hCtx.save();
-  hCtx.fillStyle = '#0d1528';
-
-  // Far mountain range (repeating)
-  const mPeriod = W * 3;
-  const mStart = -((mOff % mPeriod)) - mPeriod;
+  hCtx.save(); hCtx.fillStyle = '#0d1528';
+  const mPeriod = W * 3, mStart = -((mOff % mPeriod)) - mPeriod;
   for(let rep=0; rep<4; rep++) {
     const ox = mStart + rep * mPeriod;
-    hCtx.beginPath();
-    hCtx.moveTo(ox, H);
-    hCtx.lineTo(ox + W*0.1, H*0.52);
-    hCtx.lineTo(ox + W*0.18, H*0.62);
-    hCtx.lineTo(ox + W*0.28, H*0.44);
-    hCtx.lineTo(ox + W*0.38, H*0.58);
-    hCtx.lineTo(ox + W*0.50, H*0.40);
-    hCtx.lineTo(ox + W*0.62, H*0.55);
-    hCtx.lineTo(ox + W*0.72, H*0.46);
-    hCtx.lineTo(ox + W*0.82, H*0.60);
-    hCtx.lineTo(ox + W*0.90, H*0.50);
-    hCtx.lineTo(ox + W*1.00, H*0.58);
-    hCtx.lineTo(ox + W*1.10, H);
-    hCtx.closePath();
-    hCtx.fill();
-  }
-  // Snow caps
-  hCtx.fillStyle = 'rgba(200,215,255,0.08)';
-  for(let rep=0; rep<4; rep++) {
-    const ox = mStart + rep * mPeriod;
-    [[W*0.28,H*0.44,W*0.05],[W*0.50,H*0.40,W*0.06],[W*0.72,H*0.46,W*0.04]].forEach(([px,py,pw])=>{
-      hCtx.beginPath();
-      hCtx.moveTo(ox+px-pw, py+pw*0.6);
-      hCtx.lineTo(ox+px, py);
-      hCtx.lineTo(ox+px+pw, py+pw*0.6);
-      hCtx.closePath(); hCtx.fill();
-    });
+    hCtx.beginPath(); hCtx.moveTo(ox, H);
+    hCtx.lineTo(ox + W*0.1, H*0.52); hCtx.lineTo(ox + W*0.18, H*0.62);
+    hCtx.lineTo(ox + W*0.28, H*0.44); hCtx.lineTo(ox + W*0.38, H*0.58);
+    hCtx.lineTo(ox + W*0.50, H*0.40); hCtx.lineTo(ox + W*0.62, H*0.55);
+    hCtx.lineTo(ox + W*0.72, H*0.46); hCtx.lineTo(ox + W*0.82, H*0.60);
+    hCtx.lineTo(ox + W*0.90, H*0.50); hCtx.lineTo(ox + W*1.00, H*0.58);
+    hCtx.lineTo(ox + W*1.10, H); hCtx.closePath(); hCtx.fill();
   }
   hCtx.restore();
-
-  // ----------- LAYER 2: Hogwarts Castle (medium speed) -----------
-  const castleOff = worldX * PARALLAX[2];
-  // Castle base Y
-  const castleBaseY = H * 0.82;
-  // Castle spans a huge width — we tile it somewhat
-  const castleWidth = W * 2.5;
-  const castlePeriod = W * 6;
+  const castleOff = worldX * PARALLAX[2], castleBaseY = H * 0.82;
+  const castleWidth = W * 2.5, castlePeriod = W * 6;
   const castleStartX = W * 0.5 - (castleOff % castlePeriod);
-
   hCtx.save();
-
-  // Draw castle at multiple positions for seamless tiling
   for(let rep = -1; rep <= 2; rep++) {
     const cox = castleStartX + rep * castlePeriod;
     if(cox + castleWidth < -100 || cox > W + 100) continue;
     drawHogwardsCastle(hCtx, cox, castleBaseY, castleWidth, H, t);
   }
-
   hCtx.restore();
-
-  // ----------- LAYER 3: Foreground trees + rocks (fastest) -----------
   const fgOff = worldX * PARALLAX[3];
-  const fgH = H;
-
   hCtx.save();
-
-  // Foreground hills
   hCtx.fillStyle = '#05080e';
-  const hillPeriod = W * 1.8;
-  const hillStart = -((fgOff * 0.6) % hillPeriod) - hillPeriod;
+  const hillPeriod = W * 1.8, hillStart = -((fgOff * 0.6) % hillPeriod) - hillPeriod;
   for(let rep=0; rep<5; rep++) {
     const ox = hillStart + rep * hillPeriod;
-    hCtx.beginPath();
-    hCtx.moveTo(ox, fgH);
-    hCtx.bezierCurveTo(ox + W*0.3, fgH*0.78, ox + W*0.5, fgH*0.72, ox + W*0.7, fgH*0.80);
-    hCtx.bezierCurveTo(ox + W*0.85, fgH*0.85, ox + W*1.0, fgH*0.75, ox + W*1.2, fgH*0.82);
-    hCtx.lineTo(ox + W*1.2, fgH);
-    hCtx.closePath();
-    hCtx.fill();
+    hCtx.beginPath(); hCtx.moveTo(ox, H);
+    hCtx.bezierCurveTo(ox + W*0.3, H*0.78, ox + W*0.5, H*0.72, ox + W*0.7, H*0.80);
+    hCtx.bezierCurveTo(ox + W*0.85, H*0.85, ox + W*1.0, H*0.75, ox + W*1.2, H*0.82);
+    hCtx.lineTo(ox + W*1.2, H); hCtx.closePath(); hCtx.fill();
   }
-
-  // Trees (only bottom trees, top trees removed)
   fgTrees.forEach(tree => {
-    // Skip top trees as requested
     if(tree.side === 'top') return;
-
     const sx = tree.wx - fgOff;
     if(sx < -200 || sx > W + 200) return;
-    const baseY = tree.side === 'bottom' ? H * 0.85 : H * 0.12;
-    const flip = tree.side === 'top' ? -1 : 1;
-
-    hCtx.save();
-    hCtx.translate(sx, baseY);
-    hCtx.scale(1, flip);
-
+    const baseY = H * 0.85;
+    hCtx.save(); hCtx.translate(sx, baseY); hCtx.scale(1, 1);
     if(tree.type === 'pine') {
-      // Pine trunk
-      hCtx.fillStyle = '#1a100a';
-      hCtx.fillRect(-tree.w*0.08, 0, tree.w*0.16, tree.h*0.3);
-      // Pine layers
+      hCtx.fillStyle = '#1a100a'; hCtx.fillRect(-tree.w*0.08, 0, tree.w*0.16, tree.h*0.3);
       const layers = 4;
       for(let l=0;l<layers;l++) {
-        const ly = -tree.h*(0.15 + l*0.22);
-        const lw = tree.w*(0.5 - l*0.08);
+        const ly = -tree.h*(0.15 + l*0.22), lw = tree.w*(0.5 - l*0.08);
         hCtx.fillStyle = l%2===0 ? '#0a1a0e' : '#081408';
-        hCtx.beginPath();
-        hCtx.moveTo(-lw, ly + tree.h*0.18);
-        hCtx.lineTo(0, ly - tree.h*0.12);
-        hCtx.lineTo(lw, ly + tree.h*0.18);
-        hCtx.closePath(); hCtx.fill();
+        hCtx.beginPath(); hCtx.moveTo(-lw, ly + tree.h*0.18); hCtx.lineTo(0, ly - tree.h*0.12); hCtx.lineTo(lw, ly + tree.h*0.18); hCtx.closePath(); hCtx.fill();
       }
     } else {
-      // Dead/bare tree
-      hCtx.strokeStyle = '#111';
-      hCtx.lineWidth = tree.w*0.12;
-      hCtx.lineCap = 'round';
-      hCtx.beginPath();
-      hCtx.moveTo(0,0); hCtx.lineTo(0,-tree.h);
-      hCtx.stroke();
-      // Branches
+      hCtx.strokeStyle = '#111'; hCtx.lineWidth = tree.w*0.12; hCtx.lineCap = 'round';
+      hCtx.beginPath(); hCtx.moveTo(0,0); hCtx.lineTo(0,-tree.h); hCtx.stroke();
       for(let b=0;b<4;b++) {
-        const bh = -tree.h*(0.4 + b*0.15);
-        const bdir = b%2===0 ? 1 : -1;
+        const bh = -tree.h*(0.4 + b*0.15), bdir = b%2===0 ? 1 : -1;
         hCtx.lineWidth = tree.w*0.06;
-        hCtx.beginPath();
-        hCtx.moveTo(0,bh);
-        hCtx.lineTo(bdir*tree.w*0.6, bh - tree.h*0.15);
-        hCtx.stroke();
+        hCtx.beginPath(); hCtx.moveTo(0,bh); hCtx.lineTo(bdir*tree.w*0.6, bh - tree.h*0.15); hCtx.stroke();
       }
     }
     hCtx.restore();
   });
-
-  // Foreground rocks
   midRocks.forEach(rock => {
     const sx = rock.wx - fgOff;
     if(sx < -200 || sx > W + 200) return;
     hCtx.fillStyle = '#0a0c12';
-    hCtx.beginPath();
-    hCtx.ellipse(sx, H * 0.88, rock.w/2, rock.h/2, 0, 0, Math.PI*2);
-    hCtx.fill();
+    hCtx.beginPath(); hCtx.ellipse(sx, H * 0.88, rock.w/2, rock.h/2, 0, 0, Math.PI*2); hCtx.fill();
   });
-
   hCtx.restore();
-
-  // Ground base
   hCtx.save();
   const groundGrad = hCtx.createLinearGradient(0, H*0.85, 0, H);
-  groundGrad.addColorStop(0, '#050810');
-  groundGrad.addColorStop(1, '#030508');
-  hCtx.fillStyle = groundGrad;
-  hCtx.fillRect(0, H*0.85, W, H*0.15);
-  hCtx.restore();
-
-  // Atmospheric fog at bottom
+  groundGrad.addColorStop(0, '#050810'); groundGrad.addColorStop(1, '#030508');
+  hCtx.fillStyle = groundGrad; hCtx.fillRect(0, H*0.85, W, H*0.15); hCtx.restore();
   hCtx.save();
   const fogGrad = hCtx.createLinearGradient(0, H*0.68, 0, H*0.85);
-  fogGrad.addColorStop(0, 'transparent');
-  fogGrad.addColorStop(0.5, 'rgba(30,20,50,0.3)');
-  fogGrad.addColorStop(1, 'rgba(10,8,20,0.6)');
-  hCtx.fillStyle = fogGrad;
-  hCtx.fillRect(0, H*0.68, W, H*0.17);
-  hCtx.restore();
-
-  // ----------- DIMMING OVERLAY: Make background less bright for better visibility -----------
-  hCtx.save();
-  hCtx.globalAlpha = 0.25; // 25% opacity dark overlay for subtle dimming
-  hCtx.fillStyle = '#000000';
-  hCtx.fillRect(0, 0, W, H);
-  hCtx.restore();
+  fogGrad.addColorStop(0, 'transparent'); fogGrad.addColorStop(0.5, 'rgba(30,20,50,0.3)'); fogGrad.addColorStop(1, 'rgba(10,8,20,0.6)');
+  hCtx.fillStyle = fogGrad; hCtx.fillRect(0, H*0.68, W, H*0.17); hCtx.restore();
+  hCtx.save(); hCtx.globalAlpha = 0.25; hCtx.fillStyle = '#000000'; hCtx.fillRect(0, 0, W, H); hCtx.restore();
 }
 
-// Draw the full Hogwarts castle procedurally
 function drawHogwardsCastle(ctx, ox, baseY, totalW, H, t) {
   const windowGlow = `hsl(${45 + Math.sin(t*0.001)*10},80%,70%)`;
-
   ctx.fillStyle = '#0e1220';
-
-  // ---- Main curtain wall ----
   const wallH = totalW * 0.09;
   ctx.fillRect(ox, baseY - wallH, totalW, wallH);
-  // Battlements on wall
   const merlonW = 18, merlonH = 14, gap = 12;
-  for(let mx = ox; mx < ox + totalW; mx += merlonW + gap) {
-    ctx.fillRect(mx, baseY - wallH - merlonH, merlonW, merlonH);
-  }
-
-  // ---- Towers ----
-  // Define towers: [relX (0-1), w, h, hasTurret, windowColor]
+  for(let mx = ox; mx < ox + totalW; mx += merlonW + gap) { ctx.fillRect(mx, baseY - wallH - merlonH, merlonW, merlonH); }
   const towers = [
-    [0.04, 55, totalW*0.24, true, '#f0c040'],   // Far left — tallest (Astronomy Tower)
-    [0.12, 38, totalW*0.18, true, '#f0a030'],
-    [0.22, 30, totalW*0.14, false, '#e09020'],
-    [0.32, 45, totalW*0.22, true, '#ffe066'],   // Central keep cluster
-    [0.40, 60, totalW*0.30, true, '#f0c040'],   // The Great Hall tower
-    [0.50, 35, totalW*0.16, true, '#c0a020'],
-    [0.58, 50, totalW*0.26, true, '#f0c040'],   // Clock tower area
-    [0.66, 28, totalW*0.12, false, '#d0a030'],
-    [0.74, 42, totalW*0.20, true, '#f0c040'],
-    [0.82, 33, totalW*0.15, true, '#e0b030'],
-    [0.90, 48, totalW*0.22, true, '#f0c040'],
-    [0.96, 32, totalW*0.14, false, '#c09020'],
+    [0.04, 55, totalW*0.24, true, '#f0c040'],[0.12, 38, totalW*0.18, true, '#f0a030'],
+    [0.22, 30, totalW*0.14, false, '#e09020'],[0.32, 45, totalW*0.22, true, '#ffe066'],
+    [0.40, 60, totalW*0.30, true, '#f0c040'],[0.50, 35, totalW*0.16, true, '#c0a020'],
+    [0.58, 50, totalW*0.26, true, '#f0c040'],[0.66, 28, totalW*0.12, false, '#d0a030'],
+    [0.74, 42, totalW*0.20, true, '#f0c040'],[0.82, 33, totalW*0.15, true, '#e0b030'],
+    [0.90, 48, totalW*0.22, true, '#f0c040'],[0.96, 32, totalW*0.14, false, '#c09020'],
   ];
-
   towers.forEach(([relX, w, h, hasTurret, wc]) => {
     const tx = ox + relX * totalW;
     ctx.fillStyle = '#0d1320';
     drawTower(ctx, tx, baseY, w, h, hasTurret, wc);
   });
-
-  // ---- The Great Hall (prominent central structure) ----
-  const ghX = ox + totalW * 0.38;
-  const ghW = totalW * 0.14;
-  const ghH = totalW * 0.19;
-  ctx.fillStyle = '#0b1018';
-  ctx.fillRect(ghX, baseY - ghH, ghW, ghH);
-
-  // Great Hall roof (Gothic arch style)
-  ctx.beginPath();
-  ctx.moveTo(ghX - 10, baseY - ghH);
-  ctx.lineTo(ghX + ghW/2, baseY - ghH - ghH*0.35);
-  ctx.lineTo(ghX + ghW + 10, baseY - ghH);
-  ctx.closePath();
-  ctx.fillStyle = '#0a0e18';
-  ctx.fill();
-
-  // Great Hall windows — large Gothic stained glass glow
-  const ghWinH = ghH * 0.5;
-  const ghWinW = ghW * 0.15;
-  const ghWinCount = 4;
+  const ghX = ox + totalW * 0.38, ghW = totalW * 0.14, ghH = totalW * 0.19;
+  ctx.fillStyle = '#0b1018'; ctx.fillRect(ghX, baseY - ghH, ghW, ghH);
+  ctx.beginPath(); ctx.moveTo(ghX - 10, baseY - ghH); ctx.lineTo(ghX + ghW/2, baseY - ghH - ghH*0.35); ctx.lineTo(ghX + ghW + 10, baseY - ghH); ctx.closePath();
+  ctx.fillStyle = '#0a0e18'; ctx.fill();
+  const ghWinH = ghH * 0.5, ghWinW = ghW * 0.15, ghWinCount = 4;
   for(let i=0;i<ghWinCount;i++) {
-    const wx2 = ghX + ghW*0.1 + i*(ghW*0.2);
-    const wy = baseY - ghH + ghH*0.1;
-    ctx.save();
-    ctx.shadowBlur = 20;
-    ctx.shadowColor = i%2===0 ? '#f0c040' : '#ff8040';
+    const wx2 = ghX + ghW*0.1 + i*(ghW*0.2), wy = baseY - ghH + ghH*0.1;
+    ctx.save(); ctx.shadowBlur = 20; ctx.shadowColor = i%2===0 ? '#f0c040' : '#ff8040';
     ctx.fillStyle = (i%2===0 ? '#f0c040' : '#ff9050') + 'cc';
     ctx.fillRect(wx2, wy, ghWinW, ghWinH);
-    // Arch top
-    ctx.beginPath();
-    ctx.arc(wx2 + ghWinW/2, wy, ghWinW/2, Math.PI, 0);
-    ctx.fill();
-    ctx.restore();
+    ctx.beginPath(); ctx.arc(wx2 + ghWinW/2, wy, ghWinW/2, Math.PI, 0); ctx.fill(); ctx.restore();
   }
-
-  // ---- Connecting bridges / walkways ----
   ctx.fillStyle = '#0c1018';
-  [[0.15, 0.22, 0.04], [0.30, 0.40, 0.05], [0.55, 0.63, 0.04], [0.70, 0.80, 0.04]].forEach(([r1,r2,rh]) => {
-    const bx1 = ox + r1*totalW, bx2 = ox + r2*totalW;
-    const bh = totalW*rh;
-    const by = baseY - bh;
+  [[0.15, 0.22, 0.04],[0.30, 0.40, 0.05],[0.55, 0.63, 0.04],[0.70, 0.80, 0.04]].forEach(([r1,r2,rh]) => {
+    const bx1 = ox + r1*totalW, bx2 = ox + r2*totalW, bh = totalW*rh, by = baseY - bh;
     ctx.fillRect(bx1, by, bx2-bx1, bh);
-    // Arch below bridge
-    ctx.save();
-    ctx.fillStyle = '#07090f';
-    ctx.beginPath();
-    ctx.arc((bx1+bx2)/2, by+bh, (bx2-bx1)*0.3, 0, Math.PI);
-    ctx.fill();
-    ctx.restore();
+    ctx.save(); ctx.fillStyle = '#07090f'; ctx.beginPath(); ctx.arc((bx1+bx2)/2, by+bh, (bx2-bx1)*0.3, 0, Math.PI); ctx.fill(); ctx.restore();
   });
-
-  // ---- Boathouse / Dungeon at far left ----
-  ctx.fillStyle = '#080c14';
-  ctx.fillRect(ox + totalW*0.0, baseY - totalW*0.07, totalW*0.06, totalW*0.07);
-
-  // ---- Reflection in water (at very bottom) ----
-  ctx.save();
-  ctx.globalAlpha = 0.08;
-  ctx.scale(1, -0.3);
-  ctx.translate(0, -(baseY*2 + 50) / 0.3);
-  ctx.fillStyle = '#0e1220';
-  ctx.fillRect(ox, baseY - wallH, totalW, wallH);
-  towers.forEach(([relX, w, h]) => {
-    const tx = ox + relX * totalW;
-    ctx.fillRect(tx - w/2, baseY - h, w, h);
-  });
-  ctx.restore();
-
-  // ---- Lit torch sconces on walls ----
   const torchFlicker = 0.85 + 0.15 * Math.sin(t * 0.004 + ox);
   for(let i=0; i<12; i++) {
-    const tx = ox + totalW * (0.05 + i * 0.083);
-    const ty = baseY - wallH - 25;
-    ctx.save();
-    ctx.shadowBlur = 20 * torchFlicker;
-    ctx.shadowColor = '#ff8020';
+    const tx = ox + totalW * (0.05 + i * 0.083), ty = baseY - wallH - 25;
+    ctx.save(); ctx.shadowBlur = 20 * torchFlicker; ctx.shadowColor = '#ff8020';
     ctx.fillStyle = `rgba(255,140,40,${0.6*torchFlicker})`;
-    ctx.beginPath();
-    ctx.arc(tx, ty, 4, 0, Math.PI*2);
-    ctx.fill();
-    // flame
+    ctx.beginPath(); ctx.arc(tx, ty, 4, 0, Math.PI*2); ctx.fill();
     ctx.fillStyle = `rgba(255,200,50,${0.8*torchFlicker})`;
-    ctx.beginPath();
-    ctx.ellipse(tx, ty-6, 2.5, 5, 0, 0, Math.PI*2);
-    ctx.fill();
-    ctx.restore();
+    ctx.beginPath(); ctx.ellipse(tx, ty-6, 2.5, 5, 0, 0, Math.PI*2); ctx.fill(); ctx.restore();
   }
-
-  // ---- The Black Lake (water at bottom) ----
   ctx.save();
   const lakeGrad = ctx.createLinearGradient(ox, baseY, ox, baseY+60);
-  lakeGrad.addColorStop(0, 'rgba(10,15,35,0.9)');
-  lakeGrad.addColorStop(1, 'rgba(5,8,18,0)');
-  ctx.fillStyle = lakeGrad;
-  ctx.fillRect(ox, baseY, totalW, 60);
-  // Ripple lines
-  ctx.strokeStyle = 'rgba(240,192,64,0.08)';
-  ctx.lineWidth = 1;
+  lakeGrad.addColorStop(0, 'rgba(10,15,35,0.9)'); lakeGrad.addColorStop(1, 'rgba(5,8,18,0)');
+  ctx.fillStyle = lakeGrad; ctx.fillRect(ox, baseY, totalW, 60);
+  ctx.strokeStyle = 'rgba(240,192,64,0.08)'; ctx.lineWidth = 1;
   for(let r=0;r<5;r++) {
-    const ry = baseY + 10 + r*10;
-    const rw = totalW * (0.3 + r*0.1);
+    const ry = baseY + 10 + r*10, rw = totalW * (0.3 + r*0.1);
     const rx = ox + (totalW - rw)/2 + Math.sin(t*0.001 + r)*15;
-    ctx.beginPath();
-    ctx.ellipse(rx + rw/2, ry, rw/2, 3, 0, 0, Math.PI*2);
-    ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(rx + rw/2, ry, rw/2, 3, 0, 0, Math.PI*2); ctx.stroke();
   }
   ctx.restore();
-
-  // ---- Owls flying across ----
   const numOwls = 3;
   for(let o=0;o<numOwls;o++) {
     const owlT = ((t * 0.00015 + o * 0.33) % 1);
     const owlX = ox + owlT * (totalW + 200) - 100;
     const owlY = baseY - totalW*0.35 - Math.sin(owlT*Math.PI*4)*30 + o*40;
     if(owlX < -50 || owlX > W + 50) continue;
-    ctx.save();
-    ctx.globalAlpha = 0.6;
-    ctx.font = '18px serif';
-    ctx.fillText('🦉', owlX, owlY);
-    ctx.restore();
+    ctx.save(); ctx.globalAlpha = 0.6; ctx.font = '18px serif'; ctx.fillText('🦉', owlX, owlY); ctx.restore();
   }
 }
 
@@ -1165,54 +1008,42 @@ function drawHogwardsCastle(ctx, ox, baseY, totalW, H, t) {
 // ======================================================
 const canvas = document.getElementById('world-canvas');
 const ctx = canvas.getContext('2d');
-
 let W, H;
 function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
-resize();
-window.addEventListener('resize', resize);
-
+resize(); window.addEventListener('resize', resize);
 const bgCanvas = document.getElementById('bg-canvas');
 const bgCtx = bgCanvas.getContext('2d');
 function resizeBg() { bgCanvas.width = window.innerWidth; bgCanvas.height = window.innerHeight; }
-resizeBg();
-window.addEventListener('resize', resizeBg);
+resizeBg(); window.addEventListener('resize', resizeBg);
 
-// Game state
 let gameStarted = false;
 let currentSection = -1;
 let worldX = 0;
 const WORLD_WIDTH = 8000;
 const SECTION_SPACING = WORLD_WIDTH / (SECTIONS.length - 1);
 let currentBgSection = -1;
-
 const player = { x: 0, y: 0, worldX: 0, worldY: 0, vx: 0, vy: 0, angle: 0, tilt: 0, speed: 0 };
-
 const keys = {};
 const mobileKeys = { forward:false, backward:false, up:false, down:false };
 
 function setMobileKey(name, value) {
   mobileKeys[name] = value;
-  const btn = document.getElementById(`mobile-${name === 'backward' ? 'left' : name === 'forward' ? 'right' : name}`);
-  if (btn) btn.classList.toggle('active', value);
 }
 
 function attachMobileControl(buttonId, keyName) {
   const btn = document.getElementById(buttonId);
   if (!btn) return;
-  btn.addEventListener('pointerdown', e => {
-    e.preventDefault();
-    setMobileKey(keyName, true);
-  });
-  const release = e => { e.preventDefault && e.preventDefault(); setMobileKey(keyName, false); };
+  btn.addEventListener('pointerdown', e => { e.preventDefault(); setMobileKey(keyName, true); btn.classList.add('active'); });
+  const release = e => { e.preventDefault && e.preventDefault(); setMobileKey(keyName, false); btn.classList.remove('active'); };
   btn.addEventListener('pointerup', release);
   btn.addEventListener('pointercancel', release);
   btn.addEventListener('pointerleave', release);
 }
 
-['up', 'left', 'down', 'right'].forEach(dir => {
-  const keyName = dir === 'up' ? 'up' : dir === 'down' ? 'down' : dir === 'left' ? 'backward' : 'forward';
-  attachMobileControl(`mobile-${dir}`, keyName);
-});
+attachMobileControl('mobile-up', 'up');
+attachMobileControl('mobile-down', 'down');
+attachMobileControl('mobile-left', 'backward');
+attachMobileControl('mobile-right', 'forward');
 
 window.addEventListener('keydown', e => {
   keys[e.code] = true;
@@ -1230,8 +1061,7 @@ window.addEventListener('mousemove', e => {
 
 let trailX = 0, trailY = 0;
 function updateTrail() {
-  trailX += (mouseX - trailX) * 0.15;
-  trailY += (mouseY - trailY) * 0.15;
+  trailX += (mouseX - trailX) * 0.15; trailY += (mouseY - trailY) * 0.15;
   document.getElementById('cursor-trail').style.left = trailX + 'px';
   document.getElementById('cursor-trail').style.top = trailY + 'px';
 }
@@ -1258,24 +1088,20 @@ class Particle {
     else this.currentAlpha=this.life;
   }
   draw(ctx) {
-    ctx.save();
-    ctx.globalAlpha=this.currentAlpha||this.life;
+    ctx.save(); ctx.globalAlpha=this.currentAlpha||this.life;
     if(this.glow){ctx.shadowBlur=12;ctx.shadowColor=this.color;}
     ctx.fillStyle=this.color;
-    ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill();
-    ctx.restore();
+    ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill(); ctx.restore();
   }
 }
 
 function spawnAmbient() {
   if(!gameStarted) return;
-  for(let i=0;i<1;i++) {
-    particles.push(new Particle(Math.random()*W, Math.random()*H*0.7, {
-      spread:0.3, decay:0.0015, size:0.5+Math.random(),
-      color:`hsl(${40+Math.random()*30},70%,${70+Math.random()*20}%)`,
-      twinkle:true, glow:true
-    }));
-  }
+  particles.push(new Particle(Math.random()*W, Math.random()*H*0.7, {
+    spread:0.3, decay:0.0015, size:0.5+Math.random(),
+    color:`hsl(${40+Math.random()*30},70%,${70+Math.random()*20}%)`,
+    twinkle:true, glow:true
+  }));
 }
 
 function spawnBroomTrail() {
@@ -1318,8 +1144,7 @@ function drawStars(t) {
     ctx.shadowBlur=s.size>1?6:0; ctx.shadowColor='#f0c040';
     ctx.fillStyle=`hsl(${45+s.bright*20},80%,${70+twinkle*20}%)`;
     ctx.beginPath(); ctx.arc(x,y,s.size*(0.7+0.3*twinkle),0,Math.PI*2); ctx.fill();
-    ctx.restore();
-    s.phase+=0.01;
+    ctx.restore(); s.phase+=0.01;
   });
 }
 
@@ -1332,38 +1157,26 @@ function drawPortals(t) {
     p.pulse = (p.pulse+0.03)%(Math.PI*2);
     const pulseMult = 1+Math.sin(p.pulse)*0.1;
     const glowSize = p.hovered ? 100 : 70;
-
     const glow = ctx.createRadialGradient(x,y,0,x,y,glowSize*pulseMult);
     glow.addColorStop(0, p.color+'44'); glow.addColorStop(0.5, p.color+'22'); glow.addColorStop(1,'transparent');
-    ctx.fillStyle=glow;
-    ctx.beginPath(); ctx.arc(x,y,glowSize*pulseMult,0,Math.PI*2); ctx.fill();
-
+    ctx.fillStyle=glow; ctx.beginPath(); ctx.arc(x,y,glowSize*pulseMult,0,Math.PI*2); ctx.fill();
     ctx.save();
     ctx.strokeStyle=p.color+(p.hovered?'cc':'66');
-    ctx.lineWidth=p.hovered?3:2;
-    ctx.shadowBlur=p.hovered?30:15; ctx.shadowColor=p.color;
+    ctx.lineWidth=p.hovered?3:2; ctx.shadowBlur=p.hovered?30:15; ctx.shadowColor=p.color;
     for(let r=0;r<3;r++) {
       ctx.globalAlpha=1-r*0.25;
       ctx.beginPath(); ctx.arc(x,y,(40+r*15)*pulseMult,0,Math.PI*2); ctx.stroke();
     }
     ctx.restore();
-
     ctx.save();
-    ctx.globalAlpha=p.hovered?1:0.6;
-    ctx.fillStyle=p.color;
-    ctx.font=`${p.hovered?20:18}px serif`;
-    ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.shadowBlur=10; ctx.shadowColor=p.color;
-    ctx.fillText(p.icon,x,y);
+    ctx.globalAlpha=p.hovered?1:0.6; ctx.fillStyle=p.color;
+    ctx.font=`${p.hovered?20:18}px serif`; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.shadowBlur=10; ctx.shadowColor=p.color; ctx.fillText(p.icon,x,y);
     ctx.font=`bold ${p.hovered?13:11}px 'Cinzel',serif`;
-    ctx.fillStyle=p.hovered?'#ffe066':p.color;
-    ctx.shadowBlur=p.hovered?20:5;
+    ctx.fillStyle=p.hovered?'#ffe066':p.color; ctx.shadowBlur=p.hovered?20:5;
     ctx.fillText(p.name.toUpperCase(),x,y+55);
-    ctx.globalAlpha=0.6;
-    ctx.font='10px Cinzel';
-    ctx.fillText('[ ENTER ]',x,y+70);
+    ctx.globalAlpha=0.6; ctx.font='10px Cinzel'; ctx.fillText('[ ENTER ]',x,y+70);
     ctx.restore();
-
     if(p.hovered && Math.random()<0.4) {
       particles.push(new Particle(x+(Math.random()-0.5)*60, y+(Math.random()-0.5)*60, {
         spread:2, up:1, decay:0.03, size:1+Math.random()*2, color:p.color, glow:true
@@ -1377,32 +1190,25 @@ function drawPortals(t) {
 // ======================================================
 function drawBroomstick(t) {
   const px=player.x, py=player.y;
-  ctx.save();
-  ctx.translate(px,py);
-  ctx.rotate(player.tilt);
-
+  ctx.save(); ctx.translate(px,py); ctx.rotate(player.tilt);
   const riderGlow=ctx.createRadialGradient(0,-30,0,0,-30,50);
   riderGlow.addColorStop(0,'rgba(240,192,64,0.3)'); riderGlow.addColorStop(1,'transparent');
   ctx.fillStyle=riderGlow; ctx.beginPath(); ctx.arc(0,-30,50,0,Math.PI*2); ctx.fill();
-
   ctx.strokeStyle='#8b5a2b'; ctx.lineWidth=5; ctx.lineCap='round';
   ctx.shadowBlur=10; ctx.shadowColor='#f0c040';
   ctx.beginPath(); ctx.moveTo(-75,8); ctx.lineTo(55,5); ctx.stroke();
-
   ctx.shadowColor='#f0a020'; ctx.shadowBlur=15;
   for(let i=0;i<8;i++) {
     const bx=50+i*8;
     ctx.strokeStyle=`rgba(200,160,80,${0.9-i*0.08})`; ctx.lineWidth=2;
     ctx.beginPath(); ctx.moveTo(bx,3); ctx.lineTo(bx+15,3+(i%2)*8-4); ctx.stroke();
   }
-
   ctx.shadowBlur=0;
   ctx.fillStyle='#1a0a0a'; ctx.beginPath(); ctx.ellipse(-10,-10,12,20,0,0,Math.PI*2); ctx.fill();
   ctx.fillStyle='#0d0020'; ctx.beginPath(); ctx.moveTo(-22,5); ctx.lineTo(5,5); ctx.lineTo(8,20); ctx.lineTo(-25,20); ctx.fill();
   ctx.fillStyle='#c8a080'; ctx.beginPath(); ctx.arc(-10,-28,10,0,Math.PI*2); ctx.fill();
   ctx.fillStyle='#0a0010'; ctx.beginPath(); ctx.moveTo(-22,-28); ctx.lineTo(2,-28); ctx.lineTo(-5,-52); ctx.closePath(); ctx.fill();
   ctx.fillRect(-24,-30,28,4);
-
   if(player.speed>4) {
     ctx.globalAlpha=(player.speed-4)/4*0.5;
     const boostGlow=ctx.createRadialGradient(-40,0,0,-40,0,80);
@@ -1424,7 +1230,6 @@ function openSection(sectionId) {
   document.getElementById('panel-subtitle').textContent=s.subtitleText||s.subtitle||'';
   document.getElementById('panel-body').innerHTML=PANEL_CONTENTS[s.body]||'';
   overlay.style.display='flex';
-  createMagicalTeleportation(); // Enhanced magical teleportation effect
   requestAnimationFrame(()=>{
     overlay.style.background='rgba(0,0,0,0.8)';
     overlay.style.backdropFilter='blur(12px)';
@@ -1521,8 +1326,12 @@ function updateProgressDots() {
   const label=document.getElementById('section-label');
   label.textContent=SECTIONS[currentSection]?.name||'';
   label.classList.add('visible');
-  clearTimeout(label._t);
-  label._t=setTimeout(()=>label.classList.remove('visible'),2000);
+  clearTimeout(label._t); label._t=setTimeout(()=>label.classList.remove('visible'),2000);
+
+  // Sync mobile speed fill from main speed fill
+  const sf = document.getElementById('speed-fill');
+  const msf = document.getElementById('mobile-speed-fill');
+  if(sf && msf) msf.style.height = sf.style.height;
 }
 
 // ======================================================
@@ -1548,194 +1357,6 @@ function createStartParticles() {
 }
 createStartParticles();
 
-// ======================================================
-// MAGICAL TELEPORTATION EFFECT FOR MARAUDER'S MAP
-// ======================================================
-function createMagicalTeleportation() {
-  // Create a central magical portal effect
-  const centerX = W / 2;
-  const centerY = H / 2;
-
-  // Magical portal swirl - particles spiraling outward
-  for(let i = 0; i < 25; i++) {
-    setTimeout(() => {
-      const angle = (i / 25) * Math.PI * 4; // Multiple rotations
-      const radius = 20 + Math.random() * 100;
-      const x = centerX + Math.cos(angle) * radius;
-      const y = centerY + Math.sin(angle) * radius;
-
-      particles.push(new Particle(x, y, {
-        vx: Math.cos(angle) * 2, // Spiral outward
-        vy: Math.sin(angle) * 2,
-        spread: 0,
-        decay: 0.008,
-        size: 2 + Math.random() * 3,
-        color: `rgba(${200 + Math.random() * 55}, ${150 + Math.random() * 100}, ${255}, 0.8)`,
-        glow: true,
-        gravity: 0
-      }));
-    }, i * 30);
-  }
-
-  // Magical runes/symbols appearing in a circle
-  const runes = ['✨', '🔮', '⚡', '🌟', '💫', '🪄', '🎭', '🔥'];
-  for(let i = 0; i < 8; i++) {
-    setTimeout(() => {
-      const angle = (i / 8) * Math.PI * 2;
-      const radius = 150;
-      const x = centerX + Math.cos(angle) * radius;
-      const y = centerY + Math.sin(angle) * radius;
-
-      // Create rune particles that float upward
-      particles.push(new Particle(x, y, {
-        vx: (Math.random() - 0.5) * 0.5,
-        vy: -1 - Math.random() * 0.5,
-        spread: 0,
-        decay: 0.003,
-        size: 4 + Math.random() * 4,
-        color: `rgba(${220 + Math.random() * 35}, ${180 + Math.random() * 75}, ${255}, 0.9)`,
-        glow: true,
-        gravity: -0.002
-      }));
-    }, i * 100 + 200);
-  }
-
-  // Enhanced golden bubbles with more variety
-  setTimeout(() => {
-    const bubbleCount = 12 + Math.floor(Math.random() * 8);
-    for(let i = 0; i < bubbleCount; i++) {
-      setTimeout(() => {
-        particles.push(new Particle(
-          centerX + (Math.random() - 0.5) * 400,
-          H - 100 + Math.random() * 100,
-          {
-            vx: (Math.random() - 0.5) * 0.8,
-            vy: -0.4 - Math.random() * 0.6,
-            spread: 0,
-            decay: 0.0015,
-            size: 4 + Math.random() * 6,
-            color: `rgba(${240 + Math.random() * 15}, ${192 + Math.random() * 63}, ${64 + Math.random() * 191}, 0.75)`,
-            glow: true,
-            gravity: -0.001
-          }
-        ));
-      }, i * 120);
-    }
-  }, 300);
-
-  // Screen shake effect
-  let shakeIntensity = 8;
-  const shakeDuration = 600;
-  const startTime = Date.now();
-
-  function shakeScreen() {
-    const elapsed = Date.now() - startTime;
-    if (elapsed < shakeDuration) {
-      const progress = elapsed / shakeDuration;
-      const currentIntensity = shakeIntensity * (1 - progress);
-
-      const canvas = document.getElementById('world-canvas');
-      canvas.style.transform = `translate(${Math.random() * currentIntensity - currentIntensity/2}px, ${Math.random() * currentIntensity - currentIntensity/2}px)`;
-
-      requestAnimationFrame(shakeScreen);
-    } else {
-      const canvas = document.getElementById('world-canvas');
-      canvas.style.transform = 'none';
-    }
-  }
-  shakeScreen();
-
-  // VERTICAL TELEPORTATION HOLE EFFECT
-  createVerticalTeleportationHole(centerX, centerY);
-}
-
-function createVerticalTeleportationHole(centerX, centerY) {
-  // Create a vertical tunnel/hole effect that expands and contracts
-  const tunnelDuration = 800;
-  const startTime = Date.now();
-
-  function animateTunnel() {
-    const elapsed = Date.now() - startTime;
-    const progress = Math.min(elapsed / tunnelDuration, 1);
-
-    // Create expanding/contracting tunnel effect
-    const tunnelRadius = 20 + (progress < 0.5 ? progress * 200 : (1 - progress) * 200);
-    const particleCount = Math.floor(15 + progress * 20);
-
-    for(let i = 0; i < particleCount; i++) {
-      const angle = (i / particleCount) * Math.PI * 2;
-      const depth = Math.sin(progress * Math.PI * 2) * 100; // Oscillating depth
-      const radius = tunnelRadius + Math.sin(angle * 3 + progress * 4) * 10; // Wavy edges
-
-      const x = centerX + Math.cos(angle) * radius;
-      const y = centerY + depth; // Vertical movement
-
-      // Create tunnel particles with depth-based colors
-      const depthFactor = Math.abs(depth) / 100;
-      particles.push(new Particle(x, y, {
-        vx: Math.cos(angle) * 0.5 + (Math.random() - 0.5) * 0.2,
-        vy: (depth > 0 ? -0.3 : 0.3) + (Math.random() - 0.5) * 0.2,
-        spread: 0,
-        decay: 0.02,
-        size: 2 + Math.random() * 3 + depthFactor * 2,
-        color: `rgba(${100 + depthFactor * 155}, ${50 + depthFactor * 100}, ${200 + depthFactor * 55}, ${0.6 - depthFactor * 0.3})`,
-        glow: true,
-        gravity: 0
-      }));
-    }
-
-    // Add inner tunnel particles for depth effect
-    for(let i = 0; i < 8; i++) {
-      const angle = Math.random() * Math.PI * 2;
-      const innerRadius = tunnelRadius * 0.3;
-      const depth = Math.sin(progress * Math.PI * 3 + i) * 80;
-
-      const x = centerX + Math.cos(angle) * innerRadius;
-      const y = centerY + depth;
-
-      particles.push(new Particle(x, y, {
-        vx: (Math.random() - 0.5) * 0.8,
-        vy: (Math.random() - 0.5) * 0.8,
-        spread: 0,
-        decay: 0.015,
-        size: 1 + Math.random() * 2,
-        color: `rgba(${255}, ${215 + Math.random() * 40}, ${0}, 0.9)`,
-        glow: true,
-        gravity: 0
-      }));
-    }
-
-    if (progress < 1) {
-      setTimeout(animateTunnel, 50);
-    }
-  }
-
-  animateTunnel();
-}
-
-function createGoldenBubbles() {
-  // Create 8-12 golden bubbles that float up slowly
-  const bubbleCount = 8 + Math.floor(Math.random() * 5);
-  for(let i = 0; i < bubbleCount; i++) {
-    setTimeout(() => {
-      particles.push(new Particle(
-        W/2 + (Math.random() - 0.5) * 300, // Center area with some spread
-        H - 50, // Start near bottom
-        {
-          vx: (Math.random() - 0.5) * 0.5, // Slow horizontal drift
-          vy: -0.3 - Math.random() * 0.4,   // Float upward slowly
-          spread: 0,
-          decay: 0.002, // Very slow decay for long-lasting bubbles
-          size: 3 + Math.random() * 4, // Varied bubble sizes
-          color: `rgba(240, 192, 64, 0.7)`, // Golden with 70% opacity
-          glow: true,
-          gravity: -0.001 // Slight upward buoyancy
-        }
-      ));
-    }, i * 150); // Stagger bubble creation
-  }
-}
-
 function beginJourney() {
   const overlay=document.getElementById('start-overlay');
   overlay.style.opacity='0';
@@ -1744,12 +1365,12 @@ function beginJourney() {
     overlay.style.display='none';
     gameStarted=true;
     player.x=W/2; player.y=H/2;
-    showToast('✨ Use A/D or ← → to fly. Press M for the Marauder\'s Map!',5000);
+    showToast('✨ Touch the D-pad to fly! Tap portals to explore.',5000);
   },1500);
 }
 
 // ======================================================
-// CLICK HANDLER
+// CLICK / TAP HANDLER
 // ======================================================
 canvas.addEventListener('click', e => {
   if(!gameStarted) return;
@@ -1781,20 +1402,11 @@ canvas.addEventListener('mousemove', e => {
 let lastTime=0;
 function gameLoop(t) {
   const dt=Math.min(t-lastTime,50); lastTime=t;
-
-  // Draw Hogwarts parallax background (always, on its own canvas)
   drawHogwarts(t);
-
   ctx.clearRect(0,0,W,H);
-
-  if(!gameStarted) {
-    requestAnimationFrame(gameLoop);
-    return;
-  }
-
+  if(!gameStarted) { requestAnimationFrame(gameLoop); return; }
   updateTrail();
 
-  // INPUT
   const isBoosting=keys['Space'];
   const maxSpeed=isBoosting?50:18;
   const accel=1.5;
@@ -1811,94 +1423,53 @@ function gameLoop(t) {
   player.worldX+=player.vx;
   player.worldX=Math.max(0,Math.min(WORLD_WIDTH,player.worldX));
   worldX=player.worldX;
-
   player.y+=player.vy;
   player.y=Math.max(H*0.2,Math.min(H*0.75,player.y));
-
   player.tilt=player.vx*0.04;
   player.speed=Math.abs(player.vx);
   player.x=W/2+(mouseX-W/2)*0.1;
 
-  document.getElementById('speed-fill').style.height=`${Math.min(100,player.speed/maxSpeed*100)}%`;
+  // Update both speed bars
+  const speedPct = Math.min(100,player.speed/maxSpeed*100) + '%';
+  document.getElementById('speed-fill').style.height = speedPct;
+  document.getElementById('mobile-speed-fill').style.height = speedPct;
 
   updateProgressDots();
-
-  // Draw sparse world-space stars on top of bg
   drawStars(t);
-
-  // Draw portals
   drawPortals(t);
 
-  // ---- Realistic Owls flying between sections ----
+  // Flying owls
   const numFlyingOwls = 2;
   for(let o=0;o<numFlyingOwls;o++) {
-    // More realistic flight timing with varied speeds
-    const baseSpeed = o === 0 ? 0.00008 : 0.00012; // Different speeds for realism
+    const baseSpeed = o === 0 ? 0.00008 : 0.00012;
     const owlT = ((t * baseSpeed + o * 0.6) % 1);
-
-    // Fly between sections with more natural path
-    const startSection = o === 0 ? 0 : 3; // Owl 1: Platform to Skills, Owl 2: Projects to Journey
-    const endSection = o === 0 ? 3 : 7;
-    const startX = startSection * SECTION_SPACING;
-    const endX = endSection * SECTION_SPACING;
-    const flightDistance = endX - startX;
-
-    const owlWorldX = startX + owlT * flightDistance;
-    const owlX = owlWorldX - worldX + W/2; // Convert to screen coordinates
-
-    // More realistic vertical movement - gentle waves with occasional dives
+    const startSection = o === 0 ? 0 : 3, endSection = o === 0 ? 3 : 7;
+    const owlWorldX = startSection * SECTION_SPACING + owlT * (endSection - startSection) * SECTION_SPACING;
+    const owlX = owlWorldX - worldX + W/2;
     const waveAmplitude = 30 + Math.sin(t * 0.0005 + o * Math.PI) * 20;
-    const baseHeight = H * (0.15 + o * 0.1); // Different heights for each owl
-    const owlY = baseHeight + Math.sin(owlT * Math.PI * 4) * waveAmplitude;
-
-    // Only draw if owl is visible on screen
+    const owlY = H * (0.15 + o * 0.1) + Math.sin(owlT * Math.PI * 4) * waveAmplitude;
     if(owlX < -50 || owlX > W + 50) continue;
-
     ctx.save();
-
-    // Wing flapping animation - subtle opacity changes to simulate wings
     const flapCycle = Math.sin(t * 0.008 + o * Math.PI * 0.8) * 0.25 + 0.75;
     ctx.globalAlpha = 0.3 + flapCycle * 0.4;
-
-    // Size variation based on distance (depth perception)
     const scale = 0.7 + Math.sin(owlT * Math.PI) * 0.3;
-    ctx.font = `${Math.floor(24 * scale)}px serif`;
-
-    // Slight rotation for more realistic flight attitude
     const tilt = Math.sin(owlT * Math.PI * 6) * 0.15;
-    ctx.translate(owlX, owlY);
-    ctx.rotate(tilt);
-
-    // Add subtle shadow for depth
-    ctx.shadowColor = 'rgba(0,0,0,0.3)';
-    ctx.shadowBlur = 3;
-    ctx.shadowOffsetY = 2;
-
-    // Use realistic owl drawing instead of emoji
-    ctx.save();
-    ctx.scale(scale, scale);
-    ctx.rotate(-tilt); // Counter the parent rotation for proper wing flapping
+    ctx.translate(owlX, owlY); ctx.rotate(tilt);
+    ctx.save(); ctx.scale(scale, scale); ctx.rotate(-tilt);
     drawFlyingOwl(ctx, 0, 0, t, o);
-    ctx.restore();
-
-    ctx.restore();
+    ctx.restore(); ctx.restore();
   }
 
-  // Particles
   spawnAmbient();
   if(Math.abs(player.vx)>0.5) spawnBroomTrail();
-
   for(let i=particles.length-1;i>=0;i--) {
     particles[i].update(); particles[i].draw(ctx);
     if(particles[i].life<=0) particles.splice(i,1);
   }
-
   drawBroomstick(t);
-
   if(isBoosting) {
     ctx.save(); ctx.fillStyle='rgba(255,128,64,0.04)'; ctx.fillRect(0,0,W,H); ctx.restore();
   }
-
   requestAnimationFrame(gameLoop);
 }
 requestAnimationFrame(gameLoop);
